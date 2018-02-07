@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     }
     // and decide, in which order they will be displayed
     Collections.reverse(nc);
-    mCountryPicker.setCountriesList(nc);
+    //mCountryPicker.setCountriesList(nc);
   }
 
   private void getUserCountryInfo() {

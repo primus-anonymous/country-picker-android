@@ -13,7 +13,11 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -42,7 +46,31 @@ public class CountryPicker extends DialogFragment {
   }
 
   public CountryPicker() {
-    setCountriesList(Country.getAllCountries());
+
+    List<Country> localizedCountries = new ArrayList<>();
+
+    Locale[] locales = Locale.getAvailableLocales();
+
+    for (Country country: Country.getAllCountries()) {
+
+      for (Locale locale : locales) {
+        if (locale.getCountry().equals(country.getCode())) {
+          localizedCountries.add(new Country(country.getCode(), locale.getDisplayCountry(), country.getDialCode(), country.getFlag()));
+          break;
+        }
+
+      }
+
+    }
+
+    Collections.sort(localizedCountries, new Comparator<Country>() {
+      @Override
+      public int compare(Country country, Country t1) {
+        return country.getName().compareTo(t1.getName());
+      }
+    });
+
+    setCountriesList(localizedCountries);
   }
 
   @Override
@@ -106,7 +134,8 @@ public class CountryPicker extends DialogFragment {
   private void search(String text) {
     selectedCountriesList.clear();
     for (Country country : countriesList) {
-      if (country.getName().toLowerCase(Locale.ENGLISH).contains(text.toLowerCase())) {
+
+      if (StringUtils.containsIgnoreCase(StringUtils.stripAccents(country.getName()), StringUtils.stripAccents(text))) {
         selectedCountriesList.add(country);
       }
     }
